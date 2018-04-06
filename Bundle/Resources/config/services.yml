@@ -2,6 +2,8 @@ imports:
     - { resource: services/command.yml }
     - { resource: services/maintenance_job.yml }
     - { resource: services/model.yml }
+    - { resource: services/handler.yml }
+    - { resource: services/controller.yml }
 
 services:
 

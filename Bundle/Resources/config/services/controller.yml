@@ -1,0 +1,5 @@
+services:
+    kwc_newsletter.controller.subscribers:
+        class: KwcNewsletter\Bundle\Controller\AbstractSubscribersController
+        abstract: true
+        arguments: [@kwc_newsletter.handler.subscribers]

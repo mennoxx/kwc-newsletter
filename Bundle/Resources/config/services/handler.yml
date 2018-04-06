@@ -1,0 +1,7 @@
+services:
+    kwc_newsletter.handler.subscribers:
+        class: KwfBundle\Rest\Handler
+        arguments:
+            - "@kwc_newsletter.model.subscribers"
+            - "@security.authorization_checker"
+            - "@validator"
