@@ -54,7 +54,7 @@ class KwcNewsletter_Kwc_Newsletter_Detail_Component extends Kwc_Directories_Item
         $newsletter = $this->getData()->row;
         $queueModel = $this->getData()->parent->getComponent()->getChildModel()->getDependentModel('Queues');
         $select = $queueModel->select()
-            ->whereEquals('recipient_model', $model)
+            ->whereEquals('recipient_model_shortcut', $this->getData()->getChildComponent('_mail')->getComponent()->getRecipientModelShortcutFromModel($model))
             ->whereEquals('recipient_id', $ids)
             ->whereEquals('newsletter_id', $newsletter->id);
         $queueModel->deleteRows($select);
@@ -80,7 +80,8 @@ class KwcNewsletter_Kwc_Newsletter_Detail_Component extends Kwc_Directories_Item
             throw new Kwf_Exception('Model "' . get_class($model) . '" has to implement column mapping "Kwc_Mail_Recipient_Mapping"');
         }
 
-        $select = $this->getData()->getChildComponent('_mail')->getComponent()->getValidRecipientSelect($model, $select);
+        $mail = $this->getData()->getChildComponent('_mail')->getComponent();
+        $select = $mail->getValidRecipientSelect($model, $select);
 
         $mapping = $model->getColumnMappings('Kwc_Mail_Recipient_Mapping');
         $import = array();
@@ -95,7 +96,7 @@ class KwcNewsletter_Kwc_Newsletter_Detail_Component extends Kwc_Directories_Item
             $searchText = implode(' ', $searchArray);
             $import[] = array(
                 'newsletter_id' => $newsletter->id,
-                'recipient_model' => get_class($model),
+                'recipient_model_shortcut' => $mail->getRecipientModelShortcutFromModel(get_class($model)),
                 'recipient_id' => $e['id'],
                 'searchtext' =>
                     $searchText
