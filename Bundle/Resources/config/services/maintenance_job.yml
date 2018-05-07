@@ -7,7 +7,7 @@ services:
 
     kwc_newsletter.maintenance_job.delete_unsubscribed:
             class: KwcNewsletter\Bundle\MaintenanceJob\DeleteUnsubscribedJob
-            arguments: [@kwc_newsletter.model.subscribers]
+            arguments: [@kwc_newsletter.model.subscribers, @kwc_newsletter.model.subscriber_hashes]
             tags:
                 - { name: 'kwf.maintenance_job' }
 

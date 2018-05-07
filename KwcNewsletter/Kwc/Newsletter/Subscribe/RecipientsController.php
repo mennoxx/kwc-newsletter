@@ -1,7 +1,7 @@
 <?php
 class KwcNewsletter_Kwc_Newsletter_Subscribe_RecipientsController extends KwcNewsletter_Kwc_Newsletter_Subscribe_AbstractRecipientsController
 {
-    protected $_buttons = array('add', 'unsubscribe', 'xls');
+    protected $_buttons = array('add', 'unsubscribe', 'delete', 'xls');
     protected $_sortable = true;
     protected $_defaultOrder = 'id';
     protected $_paging = 20;
@@ -145,5 +145,24 @@ class KwcNewsletter_Kwc_Newsletter_Subscribe_RecipientsController extends KwcNew
             ->whereEquals('newsletter_component_id', $newsletterComponentId)
             ->order('pos');
         return $model->getRows($s);
+    }
+
+    protected function _beforeDelete(Kwf_Model_Row_Interface $row)
+    {
+        parent::_beforeDelete($row);
+
+        $hash = md5($row->email);
+
+        $model = Kwf_Model_Abstract::getInstance('KwcNewsletter\Bundle\Model\SubscriberHashes');
+        $select = new Kwf_Model_Select();
+        $select->whereId($hash);
+        if (!$model->countRows($select)) {
+            $model->createRow(array('id' => $hash))->save();
+        }
+
+        $select = new Kwf_Model_Select();
+        $select->whereEquals('subscriber_id', $row->id);
+        $row->getModel()->getDependentModel('Logs')->deleteRows($select);
+        $row->getModel()->getDependentModel('ToCategories')->deleteRows($select);
     }
 }
